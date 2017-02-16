@@ -10,6 +10,7 @@ import org.springframework.context.annotation.PropertySources
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
@@ -27,7 +28,7 @@ import javax.sql.DataSource
 @EnableJpaRepositories(basePackages = 'com.dpndncy.db')
 @EnableTransactionManagement
 @PropertySources(@PropertySource("file:/dpndncy.properties"))
-@Import([RestConfig])
+@Import([RestConfig, AclConfig])
 class DbConfig {
 
     @Value('${jdbc.url}')
@@ -68,6 +69,13 @@ class DbConfig {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.entityManagerFactory = entityManagerFactory();
         return txManager;
+    }
+
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager() {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource());
+        return dataSourceTransactionManager;
     }
 
     Properties hibernateProperties() {

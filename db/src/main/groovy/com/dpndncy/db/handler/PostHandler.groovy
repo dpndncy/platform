@@ -3,10 +3,12 @@ package com.dpndncy.db.handler
 import com.dpndncy.db.entity.Post
 import com.dpndncy.db.entity.Topic
 import com.dpndncy.db.entity.User
+import com.dpndncy.db.repository.PostRepository
 import com.dpndncy.db.repository.TopicRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.rest.core.annotation.HandleAfterCreate
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate
+import org.springframework.data.rest.core.annotation.HandleBeforeSave
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -20,9 +22,17 @@ class PostHandler {
     @Autowired
     TopicRepository topicRepository;
 
-    @HandleBeforeCreate
-    void handleBeforePostCreate(Post post) {
-        post.creator = getLoggedInUser();
+    @Autowired
+    PostRepository postRepository;
+
+    @HandleBeforeSave
+    void handleBeforePostSave(Post post) {
+        if(post.id == null) {
+            post.creator = getLoggedInUser();
+        }
+        else {
+            post.creator = getUserForPost(post);
+        }
     }
 
     @HandleAfterCreate
@@ -40,5 +50,9 @@ class PostHandler {
 
     static Date getCurrentTime() {
         return new Date();
+    }
+
+    User getUserForPost(Post post) {
+        return postRepository.findOne(post.id).creator;
     }
 }

@@ -19,4 +19,7 @@ interface CategoryRepository extends PagingAndSortingRepository<Category, Long> 
 
     @RestResource(exported = false)
     void delete(Category category);
+
+    @RestResource(exported = false)
+    Category save(Category category);
 }

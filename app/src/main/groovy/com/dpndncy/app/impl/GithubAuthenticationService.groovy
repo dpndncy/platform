@@ -4,6 +4,7 @@ import com.dpndncy.db.entity.User
 import com.dpndncy.db.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.web.client.RestTemplate
 
 /**
@@ -49,6 +50,6 @@ class GithubAuthenticationService {
     }
 
     private static UserDetail getUserDetail(User user) {
-        return new UserDetail(user: user, roles: [new Role(name: user.role)]);
+        return new UserDetail(user: user, roles: [new SimpleGrantedAuthority(user.role)]);
     }
 }
