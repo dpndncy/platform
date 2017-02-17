@@ -8,6 +8,7 @@ import com.dpndncy.db.repository.PostRepository
 import com.dpndncy.db.repository.TopicRepository
 import com.dpndncy.forum.service.api.ForumService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.method.P
 import org.springframework.stereotype.Component
 
 /**
@@ -27,12 +28,17 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     List<Category> getCategoriesForCourse(Long courseId) {
-        return categoryRepository.findAll();
+        return categoryRepository.findAll().asList();
     }
 
     @Override
     Category save(Category category) {
         return categoryRepository.save(category);
+    }
+
+    @Override
+    Category saveSecured(Category category) {
+        return save(category);
     }
 
     @Override
@@ -51,14 +57,16 @@ class ForumServiceImpl implements ForumService {
             Topic existingTopic = topicRepository.findOne(topic.id);
             existingTopic.title = topic.title;
             existingTopic.description = topic.description;
-            if(topic.category != null) {
-                existingTopic.category = topic.category;
-            }
             return topicRepository.save(existingTopic);
         }
         else {
             return topicRepository.save(topic);
         }
+    }
+
+    @Override
+    Topic saveSecured(@P("topic") Topic topic) {
+        return save(topic);
     }
 
     @Override
@@ -73,7 +81,19 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     Post save(Post post) {
-        return postRepository.save(post);
+        if(post.id != null) {
+            Post existingPost = postRepository.findOne(post.id);
+            existingPost.body = post.body;
+            return postRepository.save(existingPost);
+        }
+        else {
+            return postRepository.save(post);
+        }
+    }
+
+    @Override
+    Post saveSecured(Post post) {
+        return save(post);
     }
 
     @Override
