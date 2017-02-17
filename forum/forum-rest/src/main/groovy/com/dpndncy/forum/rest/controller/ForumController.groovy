@@ -3,6 +3,8 @@ package com.dpndncy.forum.rest.controller
 import com.dpndncy.db.entity.forum.Post
 import com.dpndncy.db.entity.forum.Topic
 import com.dpndncy.forum.rest.pojo.PostRequest
+import com.dpndncy.forum.rest.pojo.PostVoteRequest
+import com.dpndncy.forum.rest.pojo.PostVoteResponse
 import com.dpndncy.forum.rest.pojo.TopicRequest
 import com.dpndncy.forum.rest.pojo.TopicVoteRequest
 import com.dpndncy.forum.rest.pojo.TopicVoteResponse
@@ -153,6 +155,16 @@ class ForumController {
         }
         Post post = new Post(body: postRequest.body, creator: userDetail.user, topic: forumService.findTopicById(postRequest.topicId));
         return forumService.saveSecured(post);
+    }
+
+    @RequestMapping(path = "/post/vote", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    PostVoteResponse voteOnPost(@RequestBody PostVoteRequest postVoteRequest, @AuthenticationPrincipal UserDetail userDetail) {
+        if(postVoteRequest.postId == null) {
+            throw new InvalidValueException("postId", postVoteRequest.postId);
+        }
+        Boolean success = forumService.voteOnPost(postVoteRequest.postId, postVoteRequest.vote, userDetail.user);
+        return new PostVoteResponse(success: success);
     }
 
     @RequestMapping(path = "/posts", method = RequestMethod.GET)

@@ -3,12 +3,16 @@ package com.dpndncy.forum.service.impl
 import com.dpndncy.db.entity.User
 import com.dpndncy.db.entity.forum.Category
 import com.dpndncy.db.entity.forum.Post
+import com.dpndncy.db.entity.forum.PostVote
+import com.dpndncy.db.entity.forum.PostVoteCode
 import com.dpndncy.db.entity.forum.Topic
 import com.dpndncy.db.entity.forum.TopicView
 import com.dpndncy.db.entity.forum.TopicVote
 import com.dpndncy.db.entity.forum.TopicVoteCode
 import com.dpndncy.db.repository.forum.CategoryRepository
 import com.dpndncy.db.repository.forum.PostRepository
+import com.dpndncy.db.repository.forum.PostVoteCodeRepository
+import com.dpndncy.db.repository.forum.PostVoteRepository
 import com.dpndncy.db.repository.forum.TopicRepository
 import com.dpndncy.db.repository.forum.TopicViewRepository
 import com.dpndncy.db.repository.forum.TopicVoteCodeRepository
@@ -44,6 +48,12 @@ class ForumServiceImpl implements ForumService {
 
     @Autowired
     TopicVoteRepository topicVoteRepository;
+
+    @Autowired
+    PostVoteCodeRepository postVoteCodeRepository;
+
+    @Autowired
+    PostVoteRepository postVoteRepository;
 
     @Override
     List<Category> getCategoriesForCourse(Long courseId) {
@@ -185,6 +195,23 @@ class ForumServiceImpl implements ForumService {
             return null;
         }
         return postRepository.findOne(postId);
+    }
+
+    @Override
+    Boolean voteOnPost(Long postId, Boolean vote, User user) {
+        Post post = findPostById(postId);
+        if(post == null) {
+            throw new MissingEntityException(postId);
+        }
+        try {
+            PostVoteCode postVoteCode = postVoteCodeRepository.findByDirection(vote);
+            PostVote postVote = new PostVote(post: post, code: postVoteCode, user: user);
+            postVoteRepository.save(postVote);
+            return true;
+        }
+        catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void updateTopicAfterPostCreation(Post post) {

@@ -32,4 +32,5 @@ interface ForumService {
     @PreAuthorize("hasPermission(#post, 'WRITE')")
     Post saveSecured(@P("post") Post post);
     Post findPostById(Long postId);
+    Boolean voteOnPost(Long postId, Boolean vote, User user);
 }
