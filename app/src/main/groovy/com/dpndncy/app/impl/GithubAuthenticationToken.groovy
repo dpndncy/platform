@@ -1,5 +1,6 @@
 package com.dpndncy.app.impl
 
+import com.dpndncy.shared.pojo.UserDetail
 import lombok.Data
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

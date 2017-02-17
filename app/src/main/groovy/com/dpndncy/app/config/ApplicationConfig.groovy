@@ -3,6 +3,7 @@ package com.dpndncy.app.config
 import com.dpndncy.app.impl.GithubAuthenticationService
 import com.dpndncy.app.impl.RestErrorHandler
 import com.dpndncy.db.config.DbConfig
+import com.dpndncy.forum.rest.config.ForumRestConfig
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.databind.DeserializationFeature

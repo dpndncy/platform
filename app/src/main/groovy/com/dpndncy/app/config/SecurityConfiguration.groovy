@@ -25,7 +25,7 @@ import org.springframework.security.web.session.ConcurrentSessionFilter
  * Created by user-1 on 24/6/16.
  */
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true, proxyTargetClass = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 

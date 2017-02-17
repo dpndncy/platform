@@ -1,4 +1,4 @@
-package com.dpndncy.app.impl
+package com.dpndncy.shared.pojo
 
 import com.dpndncy.db.entity.User
 import lombok.Data

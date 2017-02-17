@@ -1,24 +1,19 @@
-package com.dpndncy.db.acl
+package com.dpndncy.shared.util
 
 import com.dpndncy.db.entity.Auditable
 import com.dpndncy.db.entity.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.domain.PrincipalSid
-import org.springframework.security.acls.model.AccessControlEntry
-import org.springframework.security.acls.model.MutableAcl
-import org.springframework.security.acls.model.MutableAclService
-import org.springframework.security.acls.model.NotFoundException
-import org.springframework.security.acls.model.ObjectIdentity
-import org.springframework.security.acls.model.Permission
-import org.springframework.security.acls.model.Sid
+import org.springframework.security.acls.model.*
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.Assert
-
 
 /**
  * Created by vaibhav on 14/02/17.
  */
+@Component
 class ACLService {
 
     @Autowired

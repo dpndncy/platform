@@ -1,6 +1,6 @@
 package com.dpndncy.app.controller
 
-import com.dpndncy.app.impl.UserDetail
+import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal

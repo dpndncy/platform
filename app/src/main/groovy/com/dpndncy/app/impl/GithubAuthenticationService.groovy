@@ -2,6 +2,7 @@ package com.dpndncy.app.impl
 
 import com.dpndncy.db.entity.User
 import com.dpndncy.db.repository.UserRepository
+import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.authority.SimpleGrantedAuthority

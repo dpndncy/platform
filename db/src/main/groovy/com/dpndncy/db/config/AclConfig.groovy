@@ -1,11 +1,6 @@
 package com.dpndncy.db.config
 
-import com.dpndncy.db.acl.ACLService
-import com.dpndncy.db.acl.PostACLEntryCreateHandler
-import com.dpndncy.db.acl.TopicACLEntryCreateHandler
-import org.springframework.beans.factory.FactoryBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.CacheManager
 import org.springframework.cache.ehcache.EhCacheFactoryBean
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean
 import org.springframework.context.annotation.Bean
@@ -14,12 +9,7 @@ import org.springframework.security.access.expression.method.DefaultMethodSecuri
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler
 import org.springframework.security.acls.AclPermissionCacheOptimizer
 import org.springframework.security.acls.AclPermissionEvaluator
-import org.springframework.security.acls.domain.AclAuthorizationStrategy
-import org.springframework.security.acls.domain.AclAuthorizationStrategyImpl
-import org.springframework.security.acls.domain.AuditLogger
-import org.springframework.security.acls.domain.ConsoleAuditLogger
-import org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy
-import org.springframework.security.acls.domain.EhCacheBasedAclCache
+import org.springframework.security.acls.domain.*
 import org.springframework.security.acls.jdbc.BasicLookupStrategy
 import org.springframework.security.acls.jdbc.JdbcMutableAclService
 import org.springframework.security.acls.jdbc.LookupStrategy
@@ -39,21 +29,6 @@ class AclConfig {
 
     @Autowired
     DataSource dataSource;
-
-    @Bean
-    ACLService customAclService() {
-        return new ACLService();
-    }
-
-    @Bean
-    PostACLEntryCreateHandler postACLEntryCreateHandler() {
-        return new PostACLEntryCreateHandler();
-    }
-
-    @Bean
-    TopicACLEntryCreateHandler topicACLEntryCreateHandler() {
-        return new TopicACLEntryCreateHandler();
-    }
 
     @Bean
     GrantedAuthority grantedAuthority() {

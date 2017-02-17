@@ -1,5 +1,6 @@
 package com.dpndncy.app.impl
 
+import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException

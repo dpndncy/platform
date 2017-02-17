@@ -1,5 +1,6 @@
 package com.dpndncy.db.config
 
+import com.dpndncy.shared.config.SharedConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -28,7 +29,7 @@ import javax.sql.DataSource
 @EnableJpaRepositories(basePackages = 'com.dpndncy.db')
 @EnableTransactionManagement
 @PropertySources(@PropertySource("file:/dpndncy.properties"))
-@Import([RestConfig, AclConfig])
+@Import([AclConfig, SharedConfig])
 class DbConfig {
 
     @Value('${jdbc.url}')
