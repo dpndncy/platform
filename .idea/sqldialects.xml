@@ -2,5 +2,6 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/db/src/main/resources/Create_ACL_Tables.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/db/src/main/resources/Create_Topic_Vote_Codes.sql" dialect="MySQL" />
   </component>
 </project>

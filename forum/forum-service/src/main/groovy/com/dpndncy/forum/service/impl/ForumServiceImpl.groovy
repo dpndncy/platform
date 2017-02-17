@@ -1,16 +1,21 @@
 package com.dpndncy.forum.service.impl
 
+import com.dpndncy.db.entity.User
 import com.dpndncy.db.entity.forum.Category
 import com.dpndncy.db.entity.forum.Post
 import com.dpndncy.db.entity.forum.Topic
-import com.dpndncy.db.repository.CategoryRepository
-import com.dpndncy.db.repository.PostRepository
-import com.dpndncy.db.repository.TopicRepository
+import com.dpndncy.db.entity.forum.TopicView
+import com.dpndncy.db.entity.forum.TopicVote
+import com.dpndncy.db.entity.forum.TopicVoteCode
+import com.dpndncy.db.repository.forum.CategoryRepository
+import com.dpndncy.db.repository.forum.PostRepository
+import com.dpndncy.db.repository.forum.TopicRepository
+import com.dpndncy.db.repository.forum.TopicViewRepository
+import com.dpndncy.db.repository.forum.TopicVoteCodeRepository
+import com.dpndncy.db.repository.forum.TopicVoteRepository
 import com.dpndncy.forum.service.api.ForumService
 import com.dpndncy.shared.exception.ActionNotAllowedException
-import com.dpndncy.shared.exception.InvalidValueException
 import com.dpndncy.shared.exception.MissingEntityException
-import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.method.P
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,6 +35,15 @@ class ForumServiceImpl implements ForumService {
 
     @Autowired
     PostRepository postRepository;
+
+    @Autowired
+    TopicViewRepository topicViewRepository;
+
+    @Autowired
+    TopicVoteCodeRepository topicVoteCodeRepository;
+
+    @Autowired
+    TopicVoteRepository topicVoteRepository;
 
     @Override
     List<Category> getCategoriesForCourse(Long courseId) {
@@ -103,6 +117,39 @@ class ForumServiceImpl implements ForumService {
         }
         topic.sticky = sticky;
         return topicRepository.save(topic);
+    }
+
+    @Override
+    Topic viewTopic(Long topicId, String ip, String agent) {
+        Topic topic = findTopicById(topicId);
+        if(topic == null) {
+            throw new MissingEntityException(topicId);
+        }
+        try {
+            TopicView topicView = new TopicView(topic: topic, ip: ip, agent: agent);
+            topicViewRepository.save(topicView);
+        }
+        catch (Exception ignored) {
+            //Eat it
+        }
+        return topic;
+    }
+
+    @Override
+    Boolean voteOnTopic(Long topicId, Boolean vote, User user) {
+        Topic topic = findTopicById(topicId);
+        if(topic == null) {
+            throw new MissingEntityException(topicId);
+        }
+        try {
+            TopicVoteCode topicVoteCode = topicVoteCodeRepository.findByDirection(vote);
+            TopicVote topicVote = new TopicVote(topic: topic, code: topicVoteCode, user: user);
+            topicVoteRepository.save(topicVote);
+            return true;
+        }
+        catch (Exception ignored) {
+            return false;
+        }
     }
 
     @Override

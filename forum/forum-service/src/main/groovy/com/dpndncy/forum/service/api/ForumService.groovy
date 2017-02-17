@@ -1,5 +1,6 @@
 package com.dpndncy.forum.service.api
 
+import com.dpndncy.db.entity.User
 import com.dpndncy.db.entity.forum.Category
 import com.dpndncy.db.entity.forum.Post
 import com.dpndncy.db.entity.forum.Topic
@@ -23,6 +24,8 @@ interface ForumService {
     Topic findTopicById(Long topicId);
     Topic lockTopic(Long topicId, Boolean lock);
     Topic makeTopicSticky(Long topicId, Boolean sticky);
+    Topic viewTopic(Long topicId, String ip, String agent);
+    Boolean voteOnTopic(Long topicId, Boolean vote, User user);
 
     List<Post> getPostsForTopic(Long topicId);
     Post save(Post post);

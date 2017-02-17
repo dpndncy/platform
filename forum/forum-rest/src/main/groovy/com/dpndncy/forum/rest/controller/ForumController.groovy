@@ -4,10 +4,13 @@ import com.dpndncy.db.entity.forum.Post
 import com.dpndncy.db.entity.forum.Topic
 import com.dpndncy.forum.rest.pojo.PostRequest
 import com.dpndncy.forum.rest.pojo.TopicRequest
+import com.dpndncy.forum.rest.pojo.TopicVoteRequest
+import com.dpndncy.forum.rest.pojo.TopicVoteResponse
 import com.dpndncy.forum.service.api.ForumService
 import com.dpndncy.shared.exception.InvalidValueException
 import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.security.access.PermissionEvaluator
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 import com.dpndncy.db.entity.forum.Category
+
+import javax.servlet.http.HttpServletRequest
+
 /**
  * Created by vaibhav on 17/02/17.
  */
@@ -106,14 +112,24 @@ class ForumController {
         return forumService.makeTopicSticky(id, false);
     }
 
+    @RequestMapping(path = "/topic/vote", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    TopicVoteResponse voteOnTopic(@RequestBody TopicVoteRequest topicVoteRequest, @AuthenticationPrincipal UserDetail userDetail) {
+        if(topicVoteRequest.topicId == null) {
+            throw new InvalidValueException("topicId", topicVoteRequest.topicId);
+        }
+        Boolean success = forumService.voteOnTopic(topicVoteRequest.topicId, topicVoteRequest.vote, userDetail.user);
+        return new TopicVoteResponse(success: success);
+    }
+
     @RequestMapping(path = "/topics", method = RequestMethod.GET)
     List<Topic> getTopics(@RequestParam Long categoryId) {
         return forumService.getTopicsForCategory(categoryId);
     }
 
     @RequestMapping(path = "/topic/{id}", method = RequestMethod.GET)
-    Topic getTopic(@PathVariable Long id) {
-        return forumService.findTopicById(id);
+    Topic getTopic(@PathVariable Long id, HttpServletRequest request) {
+        return forumService.viewTopic(id, request.getRemoteAddr(), request.getHeader(HttpHeaders.USER_AGENT));
     }
 
     @RequestMapping(path = "/posts", method = RequestMethod.POST)
