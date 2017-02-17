@@ -1,5 +1,6 @@
-package com.dpndncy.db.entity
+package com.dpndncy.db.entity.forum
 
+import com.dpndncy.db.entity.Auditable
 import groovy.transform.ToString
 
 import javax.persistence.Entity

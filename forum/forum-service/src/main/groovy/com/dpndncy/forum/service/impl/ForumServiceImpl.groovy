@@ -1,14 +1,19 @@
 package com.dpndncy.forum.service.impl
 
-import com.dpndncy.db.entity.Category
-import com.dpndncy.db.entity.Post
-import com.dpndncy.db.entity.Topic
+import com.dpndncy.db.entity.forum.Category
+import com.dpndncy.db.entity.forum.Post
+import com.dpndncy.db.entity.forum.Topic
 import com.dpndncy.db.repository.CategoryRepository
 import com.dpndncy.db.repository.PostRepository
 import com.dpndncy.db.repository.TopicRepository
 import com.dpndncy.forum.service.api.ForumService
+import com.dpndncy.shared.exception.ActionNotAllowedException
+import com.dpndncy.shared.exception.InvalidValueException
+import com.dpndncy.shared.exception.MissingEntityException
+import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.method.P
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 /**
@@ -43,6 +48,9 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     Category findCategoryById(Long categoryId) {
+        if(categoryId == null) {
+            return null;
+        }
         return categoryRepository.findOne(categoryId);
     }
 
@@ -71,7 +79,30 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     Topic findTopicById(Long topicId) {
+        if(topicId == null) {
+            return null;
+        }
         return topicRepository.findOne(topicId);
+    }
+
+    @Override
+    Topic lockTopic(Long topicId, Boolean lock) {
+        Topic topic = findTopicById(topicId);
+        if(topic == null) {
+            throw new MissingEntityException(topicId);
+        }
+        topic.locked = lock;
+        return topicRepository.save(topic);
+    }
+
+    @Override
+    Topic makeTopicSticky(Long topicId, Boolean sticky) {
+        Topic topic = findTopicById(topicId);
+        if(topic == null) {
+            throw new MissingEntityException(topicId);
+        }
+        topic.sticky = sticky;
+        return topicRepository.save(topic);
     }
 
     @Override
@@ -81,13 +112,18 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     Post save(Post post) {
+        if(!isTopicUnlocked(post.topic)) {
+            throw new ActionNotAllowedException("Cannot post to locked topic");
+        }
         if(post.id != null) {
             Post existingPost = postRepository.findOne(post.id);
             existingPost.body = post.body;
             return postRepository.save(existingPost);
         }
         else {
-            return postRepository.save(post);
+            post = postRepository.save(post);
+            updateTopicAfterPostCreation(post);
+            return post;
         }
     }
 
@@ -98,6 +134,20 @@ class ForumServiceImpl implements ForumService {
 
     @Override
     Post findPostById(Long postId) {
+        if(postId == null) {
+            return null;
+        }
         return postRepository.findOne(postId);
+    }
+
+    private void updateTopicAfterPostCreation(Post post) {
+        Topic topic = post.topic;
+        topic.lastReplyAt = new Date();
+        topic.lastReplyBy = SecurityContextHolder.context.authentication.principal.user;
+        topicRepository.save(topic);
+    }
+
+    private static Boolean isTopicUnlocked(Topic topic) {
+        return !topic.locked;
     }
 }

@@ -1,8 +1,8 @@
 package com.dpndncy.forum.service.api
 
-import com.dpndncy.db.entity.Category
-import com.dpndncy.db.entity.Post
-import com.dpndncy.db.entity.Topic
+import com.dpndncy.db.entity.forum.Category
+import com.dpndncy.db.entity.forum.Post
+import com.dpndncy.db.entity.forum.Topic
 import org.springframework.security.access.method.P
 import org.springframework.security.access.prepost.PreAuthorize
 
@@ -21,6 +21,8 @@ interface ForumService {
     @PreAuthorize("hasPermission(#topic, 'WRITE')")
     Topic saveSecured(@P("topic") Topic topic);
     Topic findTopicById(Long topicId);
+    Topic lockTopic(Long topicId, Boolean lock);
+    Topic makeTopicSticky(Long topicId, Boolean sticky);
 
     List<Post> getPostsForTopic(Long topicId);
     Post save(Post post);

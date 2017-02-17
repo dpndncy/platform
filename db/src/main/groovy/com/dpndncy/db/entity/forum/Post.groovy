@@ -1,8 +1,9 @@
-package com.dpndncy.db.entity
+package com.dpndncy.db.entity.forum
 
+import com.dpndncy.db.entity.Auditable
+import com.dpndncy.db.entity.User
 import groovy.transform.ToString
 
-import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Lob
 import javax.persistence.ManyToOne
@@ -22,6 +23,4 @@ class Post extends Auditable implements Serializable {
     User creator;
     @Lob
     String body;
-    Long upvote;
-    Long downvote;
 }

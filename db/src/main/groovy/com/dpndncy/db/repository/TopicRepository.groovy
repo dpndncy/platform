@@ -1,6 +1,6 @@
 package com.dpndncy.db.repository
 
-import com.dpndncy.db.entity.Topic
+import com.dpndncy.db.entity.forum.Topic
 import org.springframework.data.repository.PagingAndSortingRepository
 
 /**

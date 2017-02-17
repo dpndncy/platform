@@ -1,7 +1,7 @@
 package com.dpndncy.forum.rest.controller
 
-import com.dpndncy.db.entity.Post
-import com.dpndncy.db.entity.Topic
+import com.dpndncy.db.entity.forum.Post
+import com.dpndncy.db.entity.forum.Topic
 import com.dpndncy.forum.rest.pojo.PostRequest
 import com.dpndncy.forum.rest.pojo.TopicRequest
 import com.dpndncy.forum.service.api.ForumService
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-import com.dpndncy.db.entity.Category
+import com.dpndncy.db.entity.forum.Category
 /**
  * Created by vaibhav on 17/02/17.
  */
@@ -70,6 +70,42 @@ class ForumController {
         return forumService.saveSecured(topic);
     }
 
+    @RequestMapping(path = "/lock_topic/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    Topic lockTopic(@PathVariable Long id) {
+        if(id == null) {
+            throw new InvalidValueException("id", id);
+        }
+        return forumService.lockTopic(id, true);
+    }
+
+    @RequestMapping(path = "/unlock_topic/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    Topic unlockTopic(@PathVariable Long id) {
+        if(id == null) {
+            throw new InvalidValueException("id", id);
+        }
+        return forumService.lockTopic(id, false);
+    }
+
+    @RequestMapping(path = "/make_topic_sticky/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    Topic makeTopicSticky(@PathVariable Long id) {
+        if(id == null) {
+            throw new InvalidValueException("id", id);
+        }
+        return forumService.makeTopicSticky(id, true);
+    }
+
+    @RequestMapping(path = "/make_topic_unsticky/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    Topic makeTopicUnsticky(@PathVariable Long id) {
+        if(id == null) {
+            throw new InvalidValueException("id", id);
+        }
+        return forumService.makeTopicSticky(id, false);
+    }
+
     @RequestMapping(path = "/topics", method = RequestMethod.GET)
     List<Topic> getTopics(@RequestParam Long categoryId) {
         return forumService.getTopicsForCategory(categoryId);
@@ -87,9 +123,7 @@ class ForumController {
             throw new InvalidValueException("id", postRequest.id);
         }
         Post post = new Post(body: postRequest.body, creator: userDetail.user, topic: forumService.findTopicById(postRequest.topicId));
-        post = forumService.save(post);
-        updateTopicAfterPostCreation(post, userDetail);
-        return post;
+        return forumService.save(post);
     }
 
     @RequestMapping(path = "/posts", method = RequestMethod.PUT)
@@ -113,12 +147,5 @@ class ForumController {
     @RequestMapping(path = "/post/{id}", method = RequestMethod.GET)
     Post getPost(@PathVariable Long id) {
         return forumService.findPostById(id);
-    }
-
-    private void updateTopicAfterPostCreation(Post post, UserDetail userDetail) {
-        Topic topic = post.topic;
-        topic.lastReplyAt = new Date();
-        topic.lastReplyBy = userDetail.user;
-        forumService.save(topic);
     }
 }

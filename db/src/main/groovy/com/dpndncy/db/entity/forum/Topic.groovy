@@ -1,5 +1,7 @@
-package com.dpndncy.db.entity
+package com.dpndncy.db.entity.forum
 
+import com.dpndncy.db.entity.Auditable
+import com.dpndncy.db.entity.User
 import groovy.transform.ToString
 
 import javax.persistence.CascadeType
@@ -24,14 +26,10 @@ class Topic extends Auditable implements Serializable {
     User creator;
     Boolean sticky;
     Boolean locked;
-    Long hits;
     @Column(name = "last_reply_at")
     Date lastReplyAt;
     @ManyToOne(cascade = CascadeType.ALL)
-    //@Column(name = "last_reply_by")
     User lastReplyBy;
     @Lob
     String description;
-    Long upvote;
-    Long downvote;
 }
