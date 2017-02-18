@@ -13,6 +13,7 @@
         <module>db</module>
         <module>shared</module>
         <module>forum</module>
+        <module>course-repository</module>
     </modules>
 
     <properties>
