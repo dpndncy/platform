@@ -51,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
                 .csrf().disable()
                 .authorizeRequests()
-                .anyRequest().authenticated().and().logout().logoutSuccessHandler(logoutSuccessHandler());
+                .anyRequest().anonymous().and().logout().logoutSuccessHandler(logoutSuccessHandler());
 
         AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
         http.addFilterAfter(filter, ConcurrentSessionFilter);

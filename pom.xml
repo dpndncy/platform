@@ -14,6 +14,7 @@
         <module>shared</module>
         <module>forum</module>
         <module>course-repository</module>
+        <module>user</module>
     </modules>
 
     <properties>

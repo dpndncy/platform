@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest
  * Created by vaibhav on 17/02/17.
  */
 @RestController
+@RequestMapping('/forum')
 class ForumController {
 
     @Autowired

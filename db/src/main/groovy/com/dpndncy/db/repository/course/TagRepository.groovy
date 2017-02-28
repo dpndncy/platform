@@ -7,5 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository
  * Created by vaibhav on 18/02/17.
  */
 interface TagRepository extends PagingAndSortingRepository<Tag, Long> {
-
+    Tag findByNameIgnoreCase(String name);
 }

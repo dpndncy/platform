@@ -8,4 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository
  */
 interface UserRepository extends PagingAndSortingRepository<User, Long> {
     User findByGithubId(Long id);
+    User findByLogin(String login);
 }

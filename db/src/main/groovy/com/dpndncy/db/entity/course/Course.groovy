@@ -9,6 +9,7 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.Lob
 import javax.persistence.ManyToMany
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -23,7 +24,9 @@ class Course extends Auditable implements Serializable {
     @Lob
     String description;
     Boolean published;
+    @ManyToOne
     CourseCategory category;
+    @ManyToOne
     User author;
     @ManyToMany
     List<Tag> tagList;

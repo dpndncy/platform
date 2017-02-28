@@ -1,6 +1,8 @@
 package com.dpndncy.app.config
 
+import com.dpndncy.course.rest.config.CourseRepositoryRestConfig
 import com.dpndncy.forum.rest.config.ForumRestConfig
+import com.dpndncy.user.rest.config.UserRestConfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -28,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ComponentScan(["com.dpndncy.app.controller"])
-@Import(value = [SwaggerConfig, ForumRestConfig])
+@Import(value = [SwaggerConfig, ForumRestConfig, UserRestConfig, CourseRepositoryRestConfig])
 @PropertySources(@PropertySource("file:/dpndncy.properties"))
 @EnableWebMvc
 @EnableAspectJAutoProxy

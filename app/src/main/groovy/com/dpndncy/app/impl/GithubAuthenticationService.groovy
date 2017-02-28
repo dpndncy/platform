@@ -1,8 +1,8 @@
 package com.dpndncy.app.impl
 
 import com.dpndncy.db.entity.User
-import com.dpndncy.db.repository.UserRepository
 import com.dpndncy.shared.pojo.UserDetail
+import com.dpndncy.user.service.api.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -17,9 +17,10 @@ class GithubAuthenticationService {
     RestTemplate restTemplate;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     private String GITHUB_BASE_URL = "https://api.github.com";
+
 
     public UserDetail authenticate(String token) {
         GithubUser githubUser = getGithubUser(token);
@@ -27,14 +28,14 @@ class GithubAuthenticationService {
             return null;
         }
         else {
-            User user = userRepository.findByGithubId(githubUser.id);
+            User user = userService.findByGithubId(githubUser.id);
             if(user == null) {
                 user = new User(name: githubUser.name, login: githubUser.login, email: githubUser.email, role: "ROLE_USER", githubId: githubUser.id, lastLoginDate: new Date());
-                user = userRepository.save(user);
+                user = userService.save(user);
             }
             else {
                 user.setLastLoginDate(new Date());
-                user = userRepository.save(user);
+                user = userService.save(user);
             }
             return getUserDetail(user);
         }
