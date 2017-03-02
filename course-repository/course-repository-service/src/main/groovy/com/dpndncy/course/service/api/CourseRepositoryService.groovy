@@ -30,8 +30,12 @@ interface CourseRepositoryService {
     List<Course> findByConsumer(User user);
     List<CourseCategory> getCourseCategories();
     List<Course> getLatestCourses(Integer count);
-    List<Course> findByCategoryName(String categoryName);
-    List<Course> findByTagName(String tagName);
-    List<Course> findByNameMatching(String name);
-    List<Course> find(String query);
+    List<Course> findByCategoryName(String categoryName, Integer page, Integer count);
+    List<Course> findByTagName(String tagName, Integer page, Integer count);
+    List<Course> findByNameMatching(String name, Integer page, Integer count);
+    List<Course> find(String query, Integer page, Integer count);
+    Course findByNameAndAuthorName(String name, String author);
+    Integer getEnrollmentCount(Course course);
+    Module findByNameAndCourseNameAndAuthorName(String name, String course, String author);
+    Activity findByNameAndModuleNameAndCourseNameAndAuthorName(String name, String module, String course, String author);
 }

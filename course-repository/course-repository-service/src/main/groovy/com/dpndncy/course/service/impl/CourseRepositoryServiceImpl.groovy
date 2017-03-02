@@ -22,8 +22,13 @@ import com.dpndncy.db.repository.course.EvaluationRequestRepository
 import com.dpndncy.db.repository.course.LearningResourceRepository
 import com.dpndncy.db.repository.course.ModuleRepository
 import com.dpndncy.db.repository.course.TagRepository
+import com.sun.org.apache.xpath.internal.operations.Mod
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+
+import java.util.stream.Collectors
 
 /**
  * Created by vaibhav on 18/02/17.
@@ -61,7 +66,6 @@ class CourseRepositoryServiceImpl implements CourseRepositoryService {
     @Autowired
     TagRepository tagRepository;
 
-    @Autowired
 
     @Override
     Tag addTagIfNotExists(String name) {
@@ -128,41 +132,70 @@ class CourseRepositoryServiceImpl implements CourseRepositoryService {
 
     @Override
     List<Course> findByAuthor(User user) {
-        return null
+        return courseRepository.findByAuthor(user);
     }
 
     @Override
     List<Course> findByConsumer(User user) {
-        return null
+        List<Enrollment> enrollmentList = enrollmentRepository.findByUser(user);
+        return enrollmentList.stream().map({enrollment -> enrollment.course}).collect(Collectors.toList());
     }
 
     @Override
     List<CourseCategory> getCourseCategories() {
-        return null
+        return courseCategoryRepository.findAll().asList();
     }
 
     @Override
     List<Course> getLatestCourses(Integer count) {
-        return null
+        PageRequest pageRequest = new PageRequest(0, count);
+        return courseRepository.findAllByOrderByCreatedAtDesc(pageRequest).toList();
     }
 
     @Override
-    List<Course> findByCategoryName(String categoryName) {
-        return null
+    List<Course> findByCategoryName(String categoryName, Integer page, Integer count) {
+        PageRequest pageRequest = new PageRequest(page, count);
+        return courseRepository.findByCategory_Name(categoryName, pageRequest).toList();
     }
 
     @Override
-    List<Course> findByTagName(String tagName) {
-        return null
+    List<Course> findByTagName(String tagName, Integer page, Integer count) {
+        PageRequest pageRequest = new PageRequest(page, count);
+        return courseRepository.findByTagList_NameIgnoreCase(tagName, pageRequest).toList();
     }
 
     @Override
-    List<Course> findByNameMatching(String name) {
-        return null
+    List<Course> findByNameMatching(String name, Integer page, Integer count) {
+        PageRequest pageRequest = new PageRequest(page, count);
+        return courseRepository.findByNameLikeIgnoreCase(name, pageRequest).toList();
     }
 
     @Override
-    List<Course> find(String query) {
-        return null
+    List<Course> find(String query, Integer page, Integer count) {
+        List<Course> matchingName = findByNameMatching(query, page, count);
+        List<Course> matchingCategory = findByCategoryName(query, page, count);
+        List<Course> matchingTag = findByTagName(query, page, count);
+
+        return  matchingName + matchingCategory + matchingTag;
+    }
+
+    @Override
+    Course findByNameAndAuthorName(String name, String author) {
+        return courseRepository.findByNameIgnoreCaseAndAuthor_Login(name, author);
+    }
+
+    @Override
+    Integer getEnrollmentCount(Course course) {
+        return enrollmentRepository.countByCourse(course);
+    }
+
+    @Override
+    Module findByNameAndCourseNameAndAuthorName(String name, String course, String author) {
+        return moduleRepository.findByNameIgnoreCaseAndCourse_NameIgnoreCaseAndCourse_Author_Login(name, course, author);
+    }
+
+    @Override
+    Activity findByNameAndModuleNameAndCourseNameAndAuthorName(String name, String module, String course, String author) {
+        return activityRepository.findByNameIgnoreCaseAndModule_NameIgnoreCaseAndModule_Course_NameIgnoreCaseAndModule_Course_Author_Login(name, module, course, author);
     }
 }

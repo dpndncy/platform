@@ -17,7 +17,7 @@ import javax.persistence.Table
 @ToString
 class LearningResource extends Auditable implements Serializable {
 
-    String title;
+    String name;
     @Lob
     String description;
     String link;

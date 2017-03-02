@@ -2,11 +2,14 @@ package com.dpndncy.db.entity.course
 
 import com.dpndncy.db.entity.Auditable
 import com.dpndncy.db.entity.User
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import groovy.transform.ToString
 
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
 import javax.persistence.Lob
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
@@ -25,12 +28,15 @@ class Course extends Auditable implements Serializable {
     String description;
     Boolean published;
     @ManyToOne
+    @JoinColumn
     CourseCategory category;
     @ManyToOne
+    @JoinColumn
     User author;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     List<Tag> tagList;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = 'course')
+    @JsonManagedReference
     List<Module> moduleList;
     @Enumerated(EnumType.STRING)
     CourseLevel level;
