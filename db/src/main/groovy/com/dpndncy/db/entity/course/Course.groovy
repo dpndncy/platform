@@ -5,6 +5,7 @@ import com.dpndncy.db.entity.User
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import groovy.transform.ToString
 
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -40,6 +41,8 @@ class Course extends Auditable implements Serializable {
     List<Module> moduleList;
     @Enumerated(EnumType.STRING)
     CourseLevel level;
+    @Column(name = 'was_published')
+    Boolean wasPublished;
 
     public static enum CourseLevel {
         BEGINNER, INTERMEDIATE, ADVANCED

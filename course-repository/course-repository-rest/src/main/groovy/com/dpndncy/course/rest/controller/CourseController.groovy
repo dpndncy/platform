@@ -1,15 +1,27 @@
 package com.dpndncy.course.rest.controller
 
 import com.dpndncy.course.rest.pojo.ActivityInfo
+import com.dpndncy.course.rest.pojo.CourseCreateRequest
 import com.dpndncy.course.rest.pojo.CourseInfo
+import com.dpndncy.course.rest.pojo.CourseUpdateRequest
 import com.dpndncy.course.rest.pojo.ModuleInfo
+import com.dpndncy.course.rest.pojo.PublishCourseRequest
+import com.dpndncy.course.rest.pojo.TagCourseRequest
 import com.dpndncy.course.service.api.CourseRepositoryService
 import com.dpndncy.db.entity.course.Activity
 import com.dpndncy.db.entity.course.Course
 import com.dpndncy.db.entity.course.CourseCategory
 import com.dpndncy.db.entity.course.Module
+import com.dpndncy.db.entity.course.Tag
+import com.dpndncy.shared.exception.InvalidValueException
+import com.dpndncy.shared.exception.MissingEntityException
 import com.dpndncy.shared.exception.NotFoundException
+import com.dpndncy.shared.pojo.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -80,5 +92,59 @@ class CourseController {
             throw new NotFoundException("Activity not found");
         }
         return new ActivityInfo(activity: activity);
+    }
+
+    @RequestMapping(path = "/courses", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public Course createCourse(@RequestBody CourseCreateRequest courseCreateRequest, @AuthenticationPrincipal UserDetail userDetail) {
+        CourseCategory courseCategory = courseRepositoryService.findCourseCategoryById(courseCreateRequest.categoryId);
+        if(courseCategory == null) {
+            throw new InvalidValueException("categoryId", courseCreateRequest.categoryId);
+        }
+        Course course = new Course(name: courseCreateRequest.name, description: courseCreateRequest.description, level: Course.CourseLevel.valueOf(courseCreateRequest.level), category: courseCategory, published: false, author: userDetail.user);
+        return courseRepositoryService.save(course);
+    }
+
+    @RequestMapping(path = "/course/{courseId}", method = RequestMethod.PUT)
+    @PreAuthorize("isAuthenticated()")
+    public Course updateCourse(@RequestBody CourseUpdateRequest courseUpdateRequest, @AuthenticationPrincipal UserDetail userDetail, @PathVariable Long courseId) {
+        CourseCategory courseCategory = null;
+        if(courseUpdateRequest.categoryId != null) {
+            courseCategory = courseRepositoryService.findCourseCategoryById(courseUpdateRequest.categoryId);
+            if (courseCategory == null) {
+                throw new InvalidValueException("categoryId", courseUpdateRequest.categoryId);
+            }
+        }
+        Course course = new Course(id: courseId, name: courseUpdateRequest.name, description: courseUpdateRequest.description, level: Course.CourseLevel.valueOf(courseUpdateRequest.level), category: courseCategory);
+        return courseRepositoryService.saveSecured(course);
+    }
+
+    @RequestMapping(path = "/tags/search", method = RequestMethod.GET)
+    public List<Tag> searchTags(@RequestParam String q, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return courseRepositoryService.findTagsByName(q, page, size);
+    }
+
+    @RequestMapping(path = "tags", method = RequestMethod.POST)
+    public Tag createTag(@RequestBody Tag tag) {
+        return courseRepositoryService.addTagIfNotExists(tag.name);
+    }
+
+    @RequestMapping(path = "course/{courseId}/publish", method = RequestMethod.PUT)
+    public Course publish(@RequestBody PublishCourseRequest publishCourseRequest, @PathVariable Long courseId) {
+        Course existingCourse = courseRepositoryService.findCourseById(courseId);
+        if(existingCourse == null) {
+            throw new MissingEntityException(courseId);
+        }
+        existingCourse.published = publishCourseRequest.publish;
+        return courseRepositoryService.publish(existingCourse);
+    }
+
+    @RequestMapping(path = "course/{courseId}/tag", method = RequestMethod.PUT)
+    public Course tag(@RequestBody TagCourseRequest tagCourseRequest, @PathVariable Long courseId) {
+        Course existingCourse = courseRepositoryService.findCourseById(courseId);
+        if(existingCourse == null) {
+            throw new MissingEntityException(courseId);
+        }
+        return courseRepositoryService.tag(existingCourse, tagCourseRequest.tags);
     }
 }

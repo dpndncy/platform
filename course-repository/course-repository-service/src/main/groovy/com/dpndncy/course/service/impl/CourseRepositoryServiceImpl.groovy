@@ -22,9 +22,12 @@ import com.dpndncy.db.repository.course.EvaluationRequestRepository
 import com.dpndncy.db.repository.course.LearningResourceRepository
 import com.dpndncy.db.repository.course.ModuleRepository
 import com.dpndncy.db.repository.course.TagRepository
+import com.dpndncy.shared.exception.ActionNotAllowedException
+import com.dpndncy.shared.exception.MissingEntityException
 import com.sun.org.apache.xpath.internal.operations.Mod
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.security.access.method.P
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -107,7 +110,38 @@ class CourseRepositoryServiceImpl implements CourseRepositoryService {
 
     @Override
     Course save(Course course) {
-        return null
+        return courseRepository.save(course);
+    }
+
+    @Override
+    Course saveSecured(@P('course') Course course) {
+        Course existingCourse = courseRepository.findOne(course.id);
+        if(existingCourse == null) {
+            throw new MissingEntityException(course.id);
+        }
+        existingCourse.category = course.category;
+        if(existingCourse.wasPublished && existingCourse.name != course.name) {
+            throw new ActionNotAllowedException("Cannot change course name once it had been published");
+        }
+        existingCourse.name = course.name;
+        existingCourse.description = course.description;
+        existingCourse.level = course.level;
+        return courseRepository.save(existingCourse);
+    }
+
+    @Override
+    Course publish(Course course) {
+        if(course.published) {
+            course.wasPublished = true;
+        }
+        return courseRepository.save(course);
+    }
+
+    @Override
+    Course tag(Course course, List<String> tags) {
+        List<Tag> tagList = tags.stream().map({tag -> addTagIfNotExists(tag)}).collect(Collectors.toList());
+        course.tagList = tagList;
+        return courseRepository.save(course);
     }
 
     @Override
@@ -197,5 +231,21 @@ class CourseRepositoryServiceImpl implements CourseRepositoryService {
     @Override
     Activity findByNameAndModuleNameAndCourseNameAndAuthorName(String name, String module, String course, String author) {
         return activityRepository.findByNameIgnoreCaseAndModule_NameIgnoreCaseAndModule_Course_NameIgnoreCaseAndModule_Course_Author_Login(name, module, course, author);
+    }
+
+    @Override
+    CourseCategory findCourseCategoryById(Long id) {
+        return courseCategoryRepository.findOne(id);
+    }
+
+    @Override
+    Course findCourseById(Long id) {
+        return courseRepository.findOne(id);
+    }
+
+    @Override
+    List<Tag> findTagsByName(String query, Integer page, Integer count) {
+        PageRequest pageRequest = new PageRequest(page, count);
+        return tagRepository.findByNameLikeIgnoreCase(query, pageRequest).toList();
     }
 }
