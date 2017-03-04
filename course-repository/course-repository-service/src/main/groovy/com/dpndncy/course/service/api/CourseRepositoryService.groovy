@@ -49,4 +49,6 @@ interface CourseRepositoryService {
     CourseCategory findCourseCategoryById(Long id);
     Course findCourseById(Long id);
     List<Tag> findTagsByName(String query, Integer page, Integer count);
+    Long countTotalSubmissions(Activity activity);
+    List<ActivitySubmission> findSubmissionsByActivity(Activity activity, Integer page, Integer count);
 }

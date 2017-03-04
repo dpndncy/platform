@@ -9,6 +9,7 @@ import com.dpndncy.course.rest.pojo.PublishCourseRequest
 import com.dpndncy.course.rest.pojo.TagCourseRequest
 import com.dpndncy.course.service.api.CourseRepositoryService
 import com.dpndncy.db.entity.course.Activity
+import com.dpndncy.db.entity.course.ActivitySubmission
 import com.dpndncy.db.entity.course.Course
 import com.dpndncy.db.entity.course.CourseCategory
 import com.dpndncy.db.entity.course.Module
@@ -91,7 +92,9 @@ class CourseController {
         if(activity == null) {
             throw new NotFoundException("Activity not found");
         }
-        return new ActivityInfo(activity: activity);
+        Long submissionCount = courseRepositoryService.countTotalSubmissions(activity);
+        List<ActivitySubmission> latestSubmissions = courseRepositoryService.findSubmissionsByActivity(activity, 0, 10);
+        return new ActivityInfo(activity: activity, submissionCount: submissionCount, latestSubmissions: latestSubmissions);
     }
 
     @RequestMapping(path = "/courses", method = RequestMethod.POST)

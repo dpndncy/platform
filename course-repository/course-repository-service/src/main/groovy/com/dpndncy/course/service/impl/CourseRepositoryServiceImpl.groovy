@@ -248,4 +248,15 @@ class CourseRepositoryServiceImpl implements CourseRepositoryService {
         PageRequest pageRequest = new PageRequest(page, count);
         return tagRepository.findByNameLikeIgnoreCase(query, pageRequest).toList();
     }
+
+    @Override
+    Long countTotalSubmissions(Activity activity) {
+        return activitySubmissionRepository.countByActivity(activity);
+    }
+
+    @Override
+    List<ActivitySubmission> findSubmissionsByActivity(Activity activity, Integer page, Integer count) {
+        PageRequest pageRequest = new PageRequest(page, count);
+        return activitySubmissionRepository.findByActivityOrderByCreatedAtDesc(activity, pageRequest).toList();
+    }
 }
