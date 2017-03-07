@@ -7,16 +7,12 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.filter.GenericFilterBean
 
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -57,7 +53,7 @@ class AuthenticationFilter extends GenericFilterBean {
     }
 
     private Authentication tryToAuthenticateWithToken(Optional<String> token) {
-        GithubAuthenticationToken requestAuthentication = new GithubAuthenticationToken(token: token.get());
+        OAuth2AuthenticationToken requestAuthentication = new OAuth2AuthenticationToken(token: token.get());
         return tryToAuthenticate(requestAuthentication);
     }
 

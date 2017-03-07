@@ -21,8 +21,8 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    User findByGithubId(Long githubId) {
-        return userRepository.findByGithubId(githubId);
+    User findByLogin(String login) {
+        return userRepository.findByLogin(login);
     }
 
     @Override

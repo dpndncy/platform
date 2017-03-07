@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority
  * Created by vaibhav on 06/02/17.
  */
 @Data
-class GithubAuthenticationToken implements Authentication, Serializable {
+class OAuth2AuthenticationToken implements Authentication, Serializable {
 
     Boolean authenticated;
     String token;

@@ -8,7 +8,7 @@ import com.dpndncy.db.entity.User
 interface UserService {
 
     User findByUsername(String username);
-    User findByGithubId(Long githubId);
+    User findByLogin(String login);
     User save(User user);
 
 }

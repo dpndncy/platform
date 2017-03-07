@@ -1,5 +1,7 @@
-package com.dpndncy.app.impl
+package com.dpndncy.app.impl.github
 
+import com.dpndncy.app.api.AuthenticationService
+import com.dpndncy.app.impl.RestUtil
 import com.dpndncy.db.entity.User
 import com.dpndncy.shared.pojo.UserDetail
 import com.dpndncy.user.service.api.UserService
@@ -11,7 +13,7 @@ import org.springframework.web.client.RestTemplate
 /**
  * Created by vaibhav on 06/02/17.
  */
-class GithubAuthenticationService {
+class GithubAuthenticationService implements AuthenticationService {
 
     @Autowired
     RestTemplate restTemplate;
@@ -22,6 +24,7 @@ class GithubAuthenticationService {
     private String GITHUB_BASE_URL = "https://api.github.com";
 
 
+    @Override
     public UserDetail authenticate(String token) {
         GithubUser githubUser = getGithubUser(token);
         if(githubUser == null) {

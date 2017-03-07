@@ -20,8 +20,6 @@ class User extends Auditable implements Serializable {
     @Column(unique = true)
     String login;
     String role;
-    @Column(name = "github_id")
-    Long githubId;
     @Column(name = "last_login_date")
     Date lastLoginDate;
 }

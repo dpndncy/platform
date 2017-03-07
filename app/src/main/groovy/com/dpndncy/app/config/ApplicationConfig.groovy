@@ -1,9 +1,10 @@
 package com.dpndncy.app.config
 
-import com.dpndncy.app.impl.GithubAuthenticationService
+import com.dpndncy.app.api.AuthenticationService
+import com.dpndncy.app.impl.github.GithubAuthenticationService
 import com.dpndncy.app.impl.RestErrorHandler
+import com.dpndncy.app.impl.google.GoogleAuthenticationService
 import com.dpndncy.db.config.DbConfig
-import com.dpndncy.forum.rest.config.ForumRestConfig
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -40,7 +41,7 @@ class ApplicationConfig {
     }
 
     @Bean
-    GithubAuthenticationService githubAuthenticationService() {
-        return new GithubAuthenticationService();
+    AuthenticationService authenticationService() {
+        return new GoogleAuthenticationService();
     }
 }

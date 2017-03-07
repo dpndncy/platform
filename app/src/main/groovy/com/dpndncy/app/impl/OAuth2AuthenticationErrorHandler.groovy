@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse
 /**
  * Created by vaibhav on 07/02/17.
  */
-class GithubAuthenticationErrorHandler extends RequestHeaderAuthenticationFilter {
+class OAuth2AuthenticationErrorHandler extends RequestHeaderAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
