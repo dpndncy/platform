@@ -5,7 +5,7 @@ import com.dpndncy.course.rest.pojo.CourseCreateRequest
 import com.dpndncy.course.rest.pojo.CourseInfo
 import com.dpndncy.course.rest.pojo.CourseUpdateRequest
 import com.dpndncy.course.rest.pojo.ModuleInfo
-import com.dpndncy.course.rest.pojo.PublishCourseRequest
+import com.dpndncy.course.rest.pojo.CoursePublishRequest
 import com.dpndncy.course.rest.pojo.TagCourseRequest
 import com.dpndncy.course.service.api.CourseRepositoryService
 import com.dpndncy.db.entity.course.Activity
@@ -104,7 +104,7 @@ class CourseController {
         if(courseCategory == null) {
             throw new InvalidValueException("categoryId", courseCreateRequest.categoryId);
         }
-        Course course = new Course(name: courseCreateRequest.name, description: courseCreateRequest.description, level: Course.CourseLevel.valueOf(courseCreateRequest.level), category: courseCategory, published: false, author: userDetail.user);
+        Course course = new Course(name: courseCreateRequest.name, description: courseCreateRequest.description, level: courseCreateRequest.level, category: courseCategory, published: false, author: userDetail.user);
         return courseRepositoryService.save(course);
     }
 
@@ -118,7 +118,7 @@ class CourseController {
                 throw new InvalidValueException("categoryId", courseUpdateRequest.categoryId);
             }
         }
-        Course course = new Course(id: courseId, name: courseUpdateRequest.name, description: courseUpdateRequest.description, level: Course.CourseLevel.valueOf(courseUpdateRequest.level), category: courseCategory);
+        Course course = new Course(id: courseId, name: courseUpdateRequest.name, description: courseUpdateRequest.description, level: courseUpdateRequest.level, category: courseCategory);
         return courseRepositoryService.saveSecured(course);
     }
 
@@ -133,7 +133,7 @@ class CourseController {
     }
 
     @RequestMapping(path = "course/{courseId}/publish", method = RequestMethod.PUT)
-    public Course publish(@RequestBody PublishCourseRequest publishCourseRequest, @PathVariable Long courseId) {
+    public Course publish(@RequestBody CoursePublishRequest publishCourseRequest, @PathVariable Long courseId) {
         Course existingCourse = courseRepositoryService.findCourseById(courseId);
         if(existingCourse == null) {
             throw new MissingEntityException(courseId);

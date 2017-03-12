@@ -3,6 +3,7 @@ package com.dpndncy.db.entity.course
 import com.dpndncy.db.entity.Auditable
 import com.dpndncy.db.entity.User
 import com.fasterxml.jackson.annotation.JsonManagedReference
+import com.fasterxml.jackson.annotation.JsonValue
 import groovy.transform.ToString
 
 import javax.persistence.Column
@@ -45,6 +46,11 @@ class Course extends Auditable implements Serializable {
     Boolean wasPublished;
 
     public static enum CourseLevel {
-        BEGINNER, INTERMEDIATE, ADVANCED
+        BEGINNER, INTERMEDIATE, ADVANCED;
+
+        @JsonValue
+        public int toValue() {
+            return ordinal();
+        }
     }
 }
